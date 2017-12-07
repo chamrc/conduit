@@ -6,7 +6,7 @@ export const baseWidth = 8; // design base width of 8px
 export const rowGutter = 3 * baseWidth;
 
 // Formatters
-const requestsFormatter = d3.format(",.3");
+const requestsFormatter = d3.format(",");
 const successRateFormatter = d3.format(".2%");
 const latencyFormatter = d3.format(",");
 
