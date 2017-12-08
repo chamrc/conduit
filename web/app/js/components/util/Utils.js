@@ -1,5 +1,5 @@
-import * as d3 from 'd3';
 import _ from 'lodash';
+import * as d3 from 'd3';
 
 // Grid constants
 export const baseWidth = 8; // design base width of 8px
@@ -14,10 +14,10 @@ export const metricToFormatter = {
   "REQUEST_RATE": m => `${_.isNil(m) ? "---" : requestsFormatter(m)} RPS`,
   "SUCCESS_RATE": m => _.isNil(m) ? "---" : successRateFormatter(m),
   "LATENCY": m => `${_.isNil(m) ? "---" : latencyFormatter(m)} ms`
-}
+};
 
 // Classname utilities
 export const toClassName = name => {
   if (!name) return "";
   return _.lowerCase(name).replace(/[^a-zA-Z0-9]/g, "_");
-}
+};

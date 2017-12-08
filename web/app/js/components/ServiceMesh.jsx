@@ -1,15 +1,15 @@
-import React from 'react';
 import _ from 'lodash';
-import 'whatwg-fetch';
-import { Table, Row, Col } from 'antd';
+import CallToAction from './CallToAction.jsx';
+import ConduitSpinner from "./ConduitSpinner.jsx";
 import DeploymentSummary from './DeploymentSummary.jsx';
 import Metric from './Metric.jsx';
-import StatusTable from './StatusTable.jsx';
-import CallToAction from './CallToAction.jsx';
-import { rowGutter } from './util/Utils.js';
 import { processMetrics } from './util/MetricUtils.js';
-import styles from './../../css/service-mesh.css';
-import ConduitSpinner from "./ConduitSpinner.jsx";
+import React from 'react';
+import { rowGutter } from './util/Utils.js';
+import StatusTable from './StatusTable.jsx';
+import { Col, Row, Table } from 'antd';
+import './../../css/service-mesh.css';
+import 'whatwg-fetch';
 
 const serviceMeshDetailsColumns = [
   {
@@ -32,7 +32,7 @@ const componentNames = {
   "tap":          "Controller tap",
   "telemetry":    "Controller telemetry",
   "web":          "Web UI"
-}
+};
 const componentDeploys = {
   "prometheus":   "prometheus",
   "destination":  "controller",
@@ -41,12 +41,12 @@ const componentDeploys = {
   "tap":          "controller",
   "telemetry":    "controller",
   "web":          "web"
-}
-const componentsToGraph = ["proxy-api", "telemetry", "destination"]
+};
+const componentsToGraph = ["proxy-api", "telemetry", "destination"];
 const noData = {
   rollup: {},
   timeseries: { requestRate: [], successRate: [] }
-}
+};
 
 export default class ServiceMesh extends React.Component {
   constructor(props) {
@@ -62,7 +62,7 @@ export default class ServiceMesh extends React.Component {
       lastUpdated: 0,
       pendingRequests: false,
       loaded: false
-    }
+    };
   }
 
   componentDidMount() {
@@ -133,22 +133,21 @@ export default class ServiceMesh extends React.Component {
       { key: 3, name: "Added deployments", value: this.addedDeploymentCount() },
       { key: 4, name: "Unadded deployments", value: this.unaddedDeploymentCount() },
       { key: 5, name: "Data plane proxies", value: this.proxyCount() }
-    ]
+    ];
   }
 
   processDeploys(pods) {
-    let ns = this.props.namespace + "/";
     return _(pods)
       .reject(p => _.isEmpty(p.deployment) || p.controlPlane)
       .groupBy("deployment")
       .map((componentPods, name) => {
         _.remove(componentPods, p => {
-          return p.status == "Terminating";
+          return p.status === "Terminating";
         });
         let podStatuses = _.map(componentPods, p => {
           return { name: p.name, value: p.added ? "good" : "neutral" };
         });
-        return { name: name, pods: _.sortBy(podStatuses, "name") }
+        return { name: name, pods: _.sortBy(podStatuses, "name") };
       })
       .sortBy("name")
       .value();
@@ -183,14 +182,13 @@ export default class ServiceMesh extends React.Component {
             let data = _.cloneDeep(_.find(this.state.metrics, ["name", meshComponent]) || noData);
             data.id = meshComponent;
             data.name = componentNames[meshComponent];
-            return <Col span={8} key={`col-${data.id}`}>
+            return (<Col span={8} key={`col-${data.id}`}>
               <DeploymentSummary
                 key={data.id}
                 lastUpdated={this.state.lastUpdated}
                 data={data}
-                noLink={true}
-              />
-            </Col>
+                noLink={true} />
+            </Col>);
           })
         }
         </Row>
@@ -208,8 +206,7 @@ export default class ServiceMesh extends React.Component {
 
         <StatusTable
           data={this.state.components}
-          statusColumnTitle="Pod Status"
-        />
+          statusColumnTitle="Pod Status" />
       </div>
     );
   }
@@ -227,8 +224,7 @@ export default class ServiceMesh extends React.Component {
           data={this.state.deploys}
           statusColumnTitle="Proxy Status"
           shouldLink={true}
-          pathPrefix={this.props.pathPrefix}
-        />
+          pathPrefix={this.props.pathPrefix} />
       </div>
     );
   }
@@ -245,8 +241,7 @@ export default class ServiceMesh extends React.Component {
             className="conduit-table"
             dataSource={this.getServiceMeshDetails()}
             columns={serviceMeshDetailsColumns}
-            pagination={false}
-          />
+            pagination={false} />
         </div>
       </div>
     );
@@ -258,13 +253,13 @@ export default class ServiceMesh extends React.Component {
         {this.unaddedDeploymentCount() === 0 ?
           <div className="complete-mesh-message">
             All deployments have been added to the service mesh.
-          </div> 
-          : this.unaddedDeploymentCount() === 1 ? 
+          </div>
+          : this.unaddedDeploymentCount() === 1 ?
               <div className="incomplete-mesh-message">
-                1 deployment has not been added to the service mesh. 
+                1 deployment has not been added to the service mesh.
                 <div className="instructions">Add the remaining deployment to the deployment.yml file</div>
                 <div className="instructions">Then run <code>conduit inject deployment.yml | kubectl apply -f - </code> to add the deployment to the service mesh</div>
-              </div> 
+              </div>
           : <div className="incomplete-mesh-message">
               {this.unaddedDeploymentCount()} deployments have not been added to the service mesh.
               <div className="instructions">Add one or more deployments to the deployment.yml file</div>
@@ -303,7 +298,7 @@ export default class ServiceMesh extends React.Component {
 
   render() {
     if (!this.state.loaded) {
-      return <ConduitSpinner />
+      return <ConduitSpinner />;
     } else return (
         <div className="page-content">
           <div className="page-header">

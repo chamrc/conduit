@@ -1,12 +1,7 @@
-import React from 'react';
-import * as d3 from 'd3';
+import _ from 'lodash';
 import { Link } from 'react-router-dom';
-import { Table, Tabs } from 'antd';
-import { toClassName, metricToFormatter } from './util/Utils.js';
-
-const getStatusDotCn = status => {
-  return `status-dot-${status === "good" ? "green" : "grey"}`;
-}
+import React from 'react';
+import { Table } from 'antd';
 
 const columns = {
   resourceName: (shouldLink, pathPrefix) => {
@@ -21,14 +16,14 @@ const columns = {
           return name;
         }
       }
-    }
+    };
   },
   pods: {
     title: "Pods",
     dataIndex: "numEntities",
     key: "numEntities"
   },
-  status: (name) => {
+  status: name => {
     return {
       title: name,
       dataIndex: "statuses",
@@ -36,14 +31,13 @@ const columns = {
       render: statuses => {
         return _.map(statuses, status => {
           // TODO: handle case where there are too many dots for column
-          return <div
+          return (<div
             className={`status-dot status-dot-${status.value}`}
             key={status.name}
-            title={status.name}
-          >&nbsp;</div>
+            title={status.name}>&nbsp;</div>);
         });
       }
-    }
+    };
   }
 };
 
@@ -54,7 +48,7 @@ export default class StatusTable extends React.Component {
         name: datum.name,
         statuses: datum.pods,
         numEntities: _.size(datum.pods)
-      }
+      };
     });
     return _.sortBy(tableData, 'name');
   }
@@ -67,12 +61,11 @@ export default class StatusTable extends React.Component {
     ];
     let tableData = this.getTableData();
 
-    return <Table
+    return (<Table
       dataSource={tableData}
       columns={tableCols}
       pagination={false}
       className="conduit-table"
-      rowKey={r => r.name}
-    />;
+      rowKey={r => r.name} />);
   }
 }
